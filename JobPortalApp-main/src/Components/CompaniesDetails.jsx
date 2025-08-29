@@ -47,7 +47,7 @@ function CompanyDetails() {
     const fetchJobPosts = async () => {
       try {
         const response = await fetch(
-          `api/JobPost/${companyName}`
+          `/api/JobPost/${companyName}`
         );
         if (!response.ok) throw new Error("Job posts not found");
         const data = await response.json();
