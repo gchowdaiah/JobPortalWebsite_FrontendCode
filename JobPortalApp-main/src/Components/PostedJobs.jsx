@@ -29,7 +29,7 @@ function PostedJobs() {
       {jobs.length === 0 ? (
         <p className="text-muted">No jobs have been posted yet.</p>
       ) : (
-        <table className="table table-bordered mt-0">
+        <table className="table table-bordered mt-0 w-75 mx-auto">
           <thead className="table-light">
             <tr>
               <th>Title</th>
