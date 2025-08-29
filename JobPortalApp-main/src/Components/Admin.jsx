@@ -7,7 +7,7 @@ function AdminDashboard() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch("https://localhost:7125/api/auth/users");
+        const response = await fetch("/api/auth/users");
         if (!response.ok) {
           throw new Error("Failed to fetch users");
         }

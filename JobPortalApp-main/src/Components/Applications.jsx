@@ -13,7 +13,7 @@ function Applications() {
 
   const fetchApplications = async () => {
     try {
-      const response = await fetch("https://localhost:7125/api/Application");
+      const response = await fetch("/api/Application");
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to fetch applications");
@@ -46,7 +46,7 @@ function Applications() {
 
     try {
       const response = await fetch(
-        `https://localhost:7125/api/Application/${selectedApp.id}`,
+        `/api/Application/${selectedApp.id}`,
         {
           method: "PUT",
           headers: {
@@ -75,7 +75,7 @@ function Applications() {
   const handleDelete = async (id) => {
     try {
       const response = await fetch(
-        `https://localhost:7125/api/Application/${id}`,
+        `/api/Application/${id}`,
         {
           method: "DELETE",
         }

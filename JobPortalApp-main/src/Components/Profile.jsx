@@ -12,7 +12,7 @@ function Profile() {
     const fetchProfile = async () => {
       try {
         const response = await fetch(
-          `https://localhost:7125/api/Auth/users/${id}`
+          `/api/Auth/users/${id}`
         );
         console.log(response);
         if (!response.ok) {

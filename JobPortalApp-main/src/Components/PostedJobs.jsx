@@ -7,7 +7,7 @@ function PostedJobs() {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await fetch("https://localhost:7125/api/JobPost");
+        const response = await fetch("/api/JobPost");
         if (!response.ok) throw new Error("Failed to fetch job posts");
         const data = await response.json();
         setJobs(data);

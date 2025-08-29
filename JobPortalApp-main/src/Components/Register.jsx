@@ -51,7 +51,7 @@ function Register() {
 
     try {
       const registerRes = await fetch(
-        "https://localhost:7125/api/Auth/register",
+        "/api/Auth/register",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

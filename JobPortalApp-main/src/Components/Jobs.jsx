@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import News1 from "./../assets/Images/News1.jpg";
+import News1 from "../assets/Images/News1.jpg";
 import carrerAdive from "../assets/Images/CareerAdvice.jpg";
 import sucessstories from "../assets/Images/successstories.jpg";
 

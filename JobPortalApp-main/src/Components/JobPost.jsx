@@ -19,7 +19,7 @@ function JobPost() {
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
-        const response = await fetch("https://localhost:7125/api/Company");
+        const response = await fetch("/api/Company");
         if (!response.ok) throw new Error("Failed to fetch companies");
         const data = await response.json();
 
@@ -63,7 +63,7 @@ function JobPost() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("https://localhost:7125/api/JobPost", {
+    const response = await fetch("/api/JobPost", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(job),
