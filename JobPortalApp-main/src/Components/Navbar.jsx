@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 import logo from "./../assets/Images/joblogo.jpg";
-import profileLogo from "./../assets/Images/Profilelogo.avif";
+import profileLogo from "./../assets/Images/Profilelogo.jpg";
 
 function Navbar() {
   const { currentUser, logout } = useAuth();

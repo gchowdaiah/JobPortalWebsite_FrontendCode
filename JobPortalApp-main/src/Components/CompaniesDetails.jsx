@@ -26,7 +26,7 @@ function CompanyDetails() {
     const fetchCompany = async () => {
       try {
         const response = await fetch(
-          `https://localhost:7125/api/Company/${companyName}`
+          `/api/Company/${companyName}`
         );
         if (!response.ok) throw new Error("Company not found");
 
@@ -47,7 +47,7 @@ function CompanyDetails() {
     const fetchJobPosts = async () => {
       try {
         const response = await fetch(
-          `https://localhost:7125/api/JobPost/${companyName}`
+          `api/JobPost/${companyName}`
         );
         if (!response.ok) throw new Error("Job posts not found");
         const data = await response.json();
@@ -78,7 +78,7 @@ function CompanyDetails() {
     };
 
     try {
-      const response = await fetch("https://localhost:7125/api/Application", {
+      const response = await fetch("/api/Application", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
