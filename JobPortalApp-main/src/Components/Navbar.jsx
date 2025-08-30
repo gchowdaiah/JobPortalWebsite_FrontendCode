@@ -123,6 +123,9 @@ function Navbar() {
           </ul>
 
           <ul className="navbar-nav ms-auto">
+             <li className="nav-item me-3 mt-2 d-flex justify-content-center align-items-center" style={{fontSize:"20px", cursor:"pointer"}}>
+                <i className="bi bi-bell"></i>
+              </li>
             {currentUser ? (
               <li className="nav-item d-flex align-items-center">
                 <img
