@@ -51,7 +51,7 @@ const Jobs = () => {
           {[
             { title: "Software Development", path: "Software-development" },
             { title: "Marketing", path: "Marketing" },
-            { title: "Finance & Bamking", path: "finance" },
+            { title: "Finance & Banking", path: "finance" },
             { title: "Data Science", path: "data-science" },
           ].map((cat, i) => (
             <div className="col-md-3" key={i}>
