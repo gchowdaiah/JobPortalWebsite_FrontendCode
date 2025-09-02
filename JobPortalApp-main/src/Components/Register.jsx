@@ -36,18 +36,7 @@ function Register() {
     }
 
     setLoading(true);
-    const mappedData = {
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      gender: formData.gender,
-      mobileNo: formData.mobileNo,
-      dateOfBirth: formData.dateOfBirth,
-      address: formData.address,
-      email: formData.email,
-      password: formData.password,
-      confirmPassword: formData.confirmPassword,
-      role: formData.role,
-    };
+    const mappedData = { ...formData };
 
     try {
       const registerRes = await fetch(
@@ -65,11 +54,15 @@ function Register() {
         setLoading(false);
         return;
       }
+//Auto login after successful registration
+const user = {firstName: formData.firstName, lastName: formData.lastName, email: formData.email, role: formData.role};
+      login(user);
+      localStorage.setItem("user", JSON.stringify(user));
 
       setShowPopup(true);
       setTimeout(() => {
         setShowPopup(false);
-        navigate("/login"); // Redirect to login page after success message
+        navigate("/home"); // Redirect to home page after success message
       }, 1500);
     } catch (err) {
       console.error(err);

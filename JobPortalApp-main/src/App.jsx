@@ -15,6 +15,8 @@ import PrivateAdminRoute from "./Components/PrivateAdminRoute";
 import Profile from "./Components/Profile";
 import JobPost from "./Components/JobPost";
 import PostedJobs from "./Components/PostedJobs";
+import Footer from "./Components/Footer";
+
 function App() {
   return (
     <>
@@ -62,6 +64,7 @@ function App() {
                 }
               />
             </Routes>
+            <Footer />
           </div>
         </Router>
       </AuthProvider>
