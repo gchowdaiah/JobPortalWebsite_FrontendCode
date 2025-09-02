@@ -4,8 +4,7 @@ import ProfileLogo from "./../assets/Images/profilelogo.jpg";
 
 function Profile() {
   const { currentUser } = useAuth();
-
-  // Hardcoded designation list
+  
   const designations = [
     { id: 1, name: "Software Engineer" },
     { id: 2, name: "Senior Software Engineer" },
@@ -16,25 +15,58 @@ function Profile() {
   ];
 
   const [selectedDesignation, setSelectedDesignation] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
 
-  // Load saved designation from localStorage
+  // Load saved designation for logged-in user
   useEffect(() => {
-    const savedDesignation = localStorage.getItem("designation");
-    if (savedDesignation) {
-      setSelectedDesignation(savedDesignation);
+    if (currentUser?.email) {
+      const savedDesignation = localStorage.getItem(
+        `designation_${currentUser.email}`
+      );
+      if (savedDesignation) {
+        setSelectedDesignation(savedDesignation);
+      }
     }
-  }, []);
+  }, [currentUser]);
 
-  // Save designation when user selects
+  // Save designation
   const handleDesignationChange = (e) => {
     const value = e.target.value;
     setSelectedDesignation(value);
-    localStorage.setItem("designation", value);
+    localStorage.setItem(`designation_${currentUser.email}`, value);
+    setIsEditing(false); // close edit mode after saving
   };
+
+  const isAdmin = currentUser.role === "admin";
 
   return (
     <div className="container mt-4">
-      {currentUser ? (
+      {isAdmin && (
+        <div className="alert alert-info">
+          
+          <h5>Admin Profile</h5>
+            <div>
+               <img
+                src={ProfileLogo}
+                alt="profile"
+                width="50"
+                height="50"
+                className="rounded-circle me-3"
+              />
+          <p>
+            <strong>Name:</strong> Admin
+          </p>
+          <p>
+            <strong>Email:</strong> {currentUser.email}
+          </p>
+          <p>
+            <strong>Role:</strong> {currentUser.role}
+          </p>
+            </div>
+          </div>
+      )}
+
+      {currentUser && !isAdmin && (
         <>
           {/* Profile Header */}
           <div className="card mb-4">
@@ -52,20 +84,31 @@ function Profile() {
                 </h5>
                 <p className="mb-1">{currentUser.email}</p>
                 <p className="mb-1">{currentUser.role}</p>
-                <p className="mb-1"><strong>{selectedDesignation}</strong></p>
+                {selectedDesignation && !isEditing && (
+                  <p className="mb-1 d-flex align-items-center">
+                    <strong>{selectedDesignation}</strong>
+                    <button
+                      className="btn btn-sm btn-outline-secondary ms-2"
+                      onClick={() => setIsEditing(true)}
+                    >
+                     <i className="bi bi-pencil"></i>
+                    </button>
+                  </p>
+                )}
               </div>
             </div>
           </div>
 
-          {/* Designation Section */}
-          <div className="card">
-            <div className="card-body">
-              <h6 className="mb-3">Your Designation</h6>
-
-              {/* Show dropdown only if not saved */}
-              {!selectedDesignation ? (
+          {/* Designation Section → only if not saved OR if editing */}
+          {(!selectedDesignation || isEditing) && (
+            <div className="card">
+              <div className="card-body">
+                <h6 className="mb-3">
+                  {isEditing ? "Edit Designation" : "Your Designation"}
+                </h6>
                 <select
                   className="form-select"
+                  value={selectedDesignation}
                   onChange={handleDesignationChange}
                 >
                   <option value="">-- Select Designation --</option>
@@ -75,16 +118,10 @@ function Profile() {
                     </option>
                   ))}
                 </select>
-              ) : (
-                <p className="mt-2 text-success">
-                  <strong>{selectedDesignation}</strong> (saved)
-                </p>
-              )}
+              </div>
             </div>
-          </div>
+          )}
         </>
-      ) : (
-        <p>Please log in to view your profile.</p>
       )}
     </div>
   );
