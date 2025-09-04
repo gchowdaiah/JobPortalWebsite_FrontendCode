@@ -16,6 +16,7 @@ import Profile from "./Components/Profile";
 import JobPost from "./Components/JobPost";
 import PostedJobs from "./Components/PostedJobs";
 import Footer from "./Components/Footer";
+import JobDetails from "./Components/JobDetails";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/admin" element={<Admin />} />
+              <Route path="/jobs/:id" element={<JobDetails />} />
               <Route
                 path="/admin/applications"
                 element={

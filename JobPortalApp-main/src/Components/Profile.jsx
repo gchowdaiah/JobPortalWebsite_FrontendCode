@@ -12,6 +12,15 @@ function Profile() {
     { id: 4, name: "Project Manager" },
     { id: 5, name: "QA Engineer" },
     { id: 6, name: "DevOps Engineer" },
+    { id: 7, name: "Product Manager" },
+    { id: 8, name: "UI/UX Designer" },
+    { id: 9, name: "Data Scientist" },
+    { id: 10, name: "Business Analyst" },
+    { id: 11, name: "HR Manager" },
+    { id: 12, name: "Marketing Manager" },
+    { id: 13, name: "Sales Manager" },
+    { id: 14, name: "Customer Support" },
+    { id: 15, name: "Intern" }, 
   ];
 
   const [selectedDesignation, setSelectedDesignation] = useState("");

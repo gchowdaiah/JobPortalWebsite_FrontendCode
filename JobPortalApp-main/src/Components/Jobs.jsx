@@ -1,34 +1,86 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import News1 from "../assets/Images/News1.jpg";
-import carrerAdive from "../assets/Images/CareerAdvice.jpg";
-import sucessstories from "../assets/Images/successstories.jpg";
+import axios from "axios";
+import ViewDetails from "./JobDetails";
 
 const Jobs = () => {
-  const [SearchKeyword, setSearchKeyword] = useState("");
+  const [jobs, setJobs] = useState([]);
+  const [filters, setFilters] = useState({
+    designation: "",
+    location: "",
+  });
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const navigate = useNavigate();
 
+  // Fetch jobs from JobPost API
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const res = await axios.get("/api/JobPost"); // ✅ Correct API URL
+       // console.log("API response:", res.data);
+
+        if (Array.isArray(res.data)) {
+          setJobs(res.data);
+        } else {
+          console.warn("Unexpected API response structure");
+          setJobs([]);
+        }
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching jobs:", err);
+        setError("Failed to fetch jobs. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJobs();
+  }, []);
+
+  // Handle search navigation
   const handleSearch = () => {
-    if (SearchKeyword.trim()) {
-      navigate(`/search?keyword=${SearchKeyword}`);
+    if (searchKeyword.trim()) {
+      navigate(`/search?keyword=${searchKeyword}`);
     }
   };
 
+  // Handle filter changes
+  const handleFilterChange = (e) => {
+    setFilters({
+      ...filters,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  // Filter jobs safely (only by designation + location, since API doesn’t have skills/experience)
+  const filteredJobs = jobs.filter((job) => {
+    const title = job.title || "";
+    const location = job.location || "";
+
+    return (
+      title.toLowerCase().includes(filters.designation.toLowerCase()) &&
+      location.toLowerCase().includes(filters.location.toLowerCase())
+    );
+  });
+
   return (
     <div>
-      {/* Main Search Section */}
+      {/* Search Section */}
       <section className="bg-primary text-white py-5 text-center">
         <div className="container">
           <h1 className="mb-3 fw-bold">Find your dream job now</h1>
-          <p className="mb-4">5 lakh + jobs for you to explore</p>
+          <p className="mb-4">Latest job postings for you to explore</p>
           <div className="row justify-content-center">
             <div className="col-md-8">
               <div className="input-group shadow-lg">
                 <input
                   type="text"
                   className="form-control from-control-lg rounded-start-pill"
-                  placeholder="Enter skills, designation, or company...."
-                  value={SearchKeyword}
+                  placeholder="Enter job title or company..."
+                  value={searchKeyword}
                   onChange={(e) => setSearchKeyword(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                 />
@@ -44,202 +96,69 @@ const Jobs = () => {
         </div>
       </section>
 
-      {/* Job Categories */}
-      <section className="container py-5">
-        <h2 className="text-center fw-bold mb-4">Explore job categories</h2>
-        <div className="row g-4">
-          {[
-            { title: "Software Development", path: "Software-development" },
-            { title: "Marketing", path: "Marketing" },
-            { title: "Finance & Banking", path: "finance" },
-            { title: "Data Science", path: "data-science" },
-          ].map((cat, i) => (
-            <div className="col-md-3" key={i}>
-              <div className="card h-100 shadow-sm hover-zoom">
-                <div className="card-body text-center">
-                  <h5 className="card-title">{cat.title}</h5>
-                  <p className="card-text">Explore jobs in {cat.title}.</p>
-                  <Link
-                    to={`/jobs/${cat.title}`}
-                    className="btn btn-outline-primary"
-                  >
-                    Explore
-                  </Link>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Featured Jobs */}
-      <section className="container py-5">
-        <div className="contianer">
-          <h2 className="text-center fw-bold mb-4">Featured Jobs</h2>
-          <div className="row g-4">
-            {[
-              {
-                title: "Software Engineer",
-                company: "Tech Innovators",
-                location: "Hyderabad",
-                id: 1,
-              },
-              {
-                title: "Data Scientist",
-                company: "Data Analytics",
-                location: "Bangalore",
-                id: 2,
-              },
-              {
-                title: "Marketing",
-                company: "Marketing Agency",
-                location: "Mumbai",
-                id: 3,
-              },
-              {
-                title: "Finance Manager",
-                company: "Finance Firm",
-                location: "Delhi",
-                id: 4,
-              },
-              {
-                title: "HR Manager",
-                company: "HR Services",
-                location: "Chennai",
-                id: 5,
-              },
-              {
-                title: "Product Manager",
-                company: "Product Development",
-                location: "Pune",
-                id: 6,
-              },
-            ].map((job, i) => (
-              <div className="col-md-4" key={i}>
-                <div className="card h-100 shadow-sm">
-                  <div className="card-body">
-                    <h5 className="card-title">{job.title}</h5>
-                    <p className="card-text">Company: {job.company}</p>
-                    <p className="card-text">Location: {job.location}</p>
-                    <Link
-                      to={`/jobs/${job.id}`}
-                      className="btn btn-outline-primary btn-sm"
-                    >
-                      View Details
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))}
+      {/* Filters */}
+      <section className="container py-4">
+        <h4 className="fw-bold mb-3">Filter Jobs</h4>
+        <div className="row g-3">
+          <div className="col-md-6">
+            <input
+              type="text"
+              name="designation"
+              className="form-control"
+              placeholder="Designation"
+              value={filters.designation}
+              onChange={handleFilterChange}
+            />
+          </div>
+          <div className="col-md-6">
+            <input
+              type="text"
+              name="location"
+              className="form-control"
+              placeholder="Location"
+              value={filters.location}
+              onChange={handleFilterChange}
+            />
           </div>
         </div>
       </section>
 
-      {/* Top Companies */}
+      {/* Jobs Listing */}
       <section className="container py-5">
-        <h2 className="text-center fw-bold mb-4">Top Companies</h2>
+        <h4 className="fw-bold mb-4">Available Jobs</h4>
+        {loading && <p>Loading jobs...</p>}
+        {error && <p className="text-danger">{error}</p>}
         <div className="row g-4">
-          {[
-            "MNCs",
-            "Startups",
-            "Product",
-            "Healthcare",
-            "Manufacturing",
-            "Banking & Finance",
-          ].map((name, i) => (
-            <div className="col-md-4" key={i}>
-              <div className="card h-100 text-center shadow-sm">
+          {filteredJobs.length === 0 && !loading && (
+            <p className="text-center text-muted">No jobs found.</p>
+          )}
+          {filteredJobs.map((job) => (
+            <div className="col-md-4" key={job.id}>
+              <div className="card h-100 shadow-sm">
                 <div className="card-body">
-                  <h5 className="card-title">{name}</h5>
+                  <h5 className="card-title">{job.title}</h5>
                   <p className="card-text">
-                    {Math.floor(Math.random() * 2000 + 200)}+ actively hirirng
+                    <strong>Company:</strong> {job.companyName}
                   </p>
-                  <Link
-                    to="/companies"
-                    className="btn btn-outline-primary btn-sm"
-                  >
-                    View Company
-                  </Link>
+                  <p className="card-text">
+                    <strong>Description:</strong>{" "}
+                    {job.description.length > 100
+                      ? job.description.substring(0, 10) + "..."
+                      : job.description}
+                  </p>
+                  <p className="card-text">
+                    <strong>Location:</strong> {job.location}
+                  </p>
+                  <p className="card-text">
+                    <strong>Posted At:</strong>{" "}
+                    {new Date(job.postedAt).toLocaleString()}
+                  </p>
+                 <Link to={`/jobs/${job.id}`} className="btn btn-outline-primary btn-sm">View Details</Link>
+
                 </div>
               </div>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* Latest News */}
-      <section className="container py-5">
-        <h2 className="text-center mb-5 fw-bold text-primary">Latest News</h2>
-        <div className="row g-4">
-          <div className="col-md-4">
-            <div className="card h-100 shadow news-card border-0">
-              <img
-                src={News1}
-                className="card-img-top"
-                alt="Job Market Trends"
-              />
-              <div className="card-body">
-                <h5 className="card-title">Job Market Trends</h5>
-                <p className="card-text">
-                  Stay updated with the latest trends in the job market.
-                </p>
-                <Link
-                  to="https://varthana.com/student/top-major-trends-the-job-market-will-see"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-outline-primary btn-sm"
-                >
-                  Read More
-                </Link>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-4">
-            <div className="card h-100 shadow news-card border-0">
-              <img
-                src={carrerAdive}
-                className="card-img-top"
-                alt="Job Market Trends"
-              />
-              <div className="card-body">
-                <h5 className="card-title">Carrer Adivce</h5>
-                <p className="card-text">
-                  Get expert advice on how to advance your carrer.
-                </p>
-                <Link
-                  to="https://www.janbasktraining.com/blog/top-10-professional-career-tips/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-outline-primary btn-sm"
-                >
-                  Read More
-                </Link>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-4">
-            <div className="card h-100 shadow news-card border-0">
-              <img
-                src={sucessstories}
-                className="card-img-top"
-                alt="Job Market Trends"
-              />
-              <div className="card-body">
-                <h5 className="card-title">Success Stories</h5>
-                <p className="card-text">
-                  Read inspiring success stories from our users.
-                </p>
-                <Link
-                  to="https://dailyinspiredlife.com/real-life-inspirational-stories-of-success-from-around-the-world/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-outline-primary btn-sm"
-                >
-                  Read More
-                </Link>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
     </div>

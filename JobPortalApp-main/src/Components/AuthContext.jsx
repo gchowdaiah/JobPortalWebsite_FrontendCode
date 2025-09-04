@@ -14,7 +14,7 @@ export function AuthProvider({ children }) {
   });
 
   useEffect(() => {
-    // Sync the registeredUsers and currentUser to localStorage
+    // Sync to localStorage
     localStorage.setItem("registeredUsers", JSON.stringify(registeredUsers));
     if (currentUser) {
       localStorage.setItem("currentUser", JSON.stringify(currentUser));
@@ -24,7 +24,7 @@ export function AuthProvider({ children }) {
   }, [registeredUsers, currentUser]);
 
   const register = (user) => {
-    // Check if the user already exists by email
+    // Check if already exists
     const userExists = registeredUsers.some((u) => u.email === user.email);
     if (userExists) {
       console.log("User already registered");
@@ -42,16 +42,25 @@ export function AuthProvider({ children }) {
   };
 
   const login = (user) => {
-    // Find and update the logged-in user
-    const updatedUsers = registeredUsers.map((u) => {
+    // Update user if exists
+    let updatedUsers = registeredUsers.map((u) => {
       if (u.email === user.email) {
-        return { ...u, lastLogin: new Date(), loggedIn: true };
+        return { ...u, lastLogin: new Date(), loggedIn: true, role: user.role };
       }
       return u;
     });
 
+    // If not exists (e.g., from API), add user
+    const userExists = updatedUsers.some((u) => u.email === user.email);
+    if (!userExists) {
+      updatedUsers = [
+        ...updatedUsers,
+        { ...user, registeredAt: new Date(), lastLogin: new Date(), loggedIn: true },
+      ];
+    }
+
     setRegisteredUsers(updatedUsers);
-    setCurrentUser(user);
+    setCurrentUser(user); // ✅ Save full user object
   };
 
   const logout = () => {
@@ -65,7 +74,6 @@ export function AuthProvider({ children }) {
 
       setRegisteredUsers(updatedUsers);
     }
-
     setCurrentUser(null);
   };
 

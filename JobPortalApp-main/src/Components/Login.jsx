@@ -17,18 +17,18 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Hardcoded Admin credentials (for testing purposes)
+    // Hardcoded Admin
     const adminCredentials = {
       email: "admin@jobportal.com",
       password: "Admin@123",
     };
 
-    // Check for admin credentials first
     if (
       formData.email === adminCredentials.email &&
       formData.password === adminCredentials.password
     ) {
-      login({ email: formData.email, role: "admin" });
+      const adminUser = { email: formData.email, role: "admin" };
+      login(adminUser);
 
       setShowPopup(true);
       setTimeout(() => {
@@ -38,7 +38,7 @@ function Login() {
       return;
     }
 
-    // Make an API call if it's not the admin login
+    // API login
     try {
       const response = await fetch("/api/Auth/login", {
         method: "POST",
@@ -52,13 +52,24 @@ function Login() {
       if (response.ok) {
         const data = await response.json();
         const user = data.user || data;
-        login({ email: user.email, role: user.role });
-        localStorage.setItem("user", JSON.stringify(formData));
+
+        // ✅ Full user object
+        const loggedInUser = {
+          email: user.email,
+          role: user.role,
+          // id: user.id || null,
+          name: user.name || "",
+        };
+
+        login(loggedInUser);
+
         setShowPopup(true);
         setTimeout(() => {
           setShowPopup(false);
-          if (user.role === "admin") {
+          if (loggedInUser.role === "admin") {
             navigate("/admin");
+          } else if (loggedInUser.role === "employer") {
+            navigate("/profile");
           } else {
             navigate("/home");
           }
